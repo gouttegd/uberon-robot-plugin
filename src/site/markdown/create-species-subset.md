@@ -24,3 +24,8 @@ Alternatively, to merely _tag_ the classes as belonging to the subset
 without actively removing them, use both the `--no-remove` option to
 keep the classes in the ontology and the `--subset-name` option to
 specify the subset IRI to tag the classes with.
+
+Use the `--prune-taxa` option to remove from the output ontology all
+`NCBITaxon:*` classes that are not relevant to the subset. (This has no
+effect when `--no-remove` is set, since nothing is removing from the
+output ontology under that option.)
