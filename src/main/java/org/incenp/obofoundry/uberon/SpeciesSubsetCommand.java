@@ -75,6 +75,7 @@ public class SpeciesSubsetCommand extends BasePlugin {
     private static final IRI IN_SUBSET = IRI.create("http://www.geneontology.org/formats/oboInOwl#inSubset");
     private static final IRI SUBSET_PROPERTY = IRI
             .create("http://www.geneontology.org/formats/oboInOwl#SubsetProperty");
+    private static final IRI TAXON_ROOT = IRI.create("http://purl.obolibrary.org/obo/NCBITaxon_131567");
 
     public SpeciesSubsetCommand() {
         super("create-species-subset", "create a subset for a given taxon",
@@ -87,6 +88,7 @@ public class SpeciesSubsetCommand extends BasePlugin {
         options.addOption(null, "only-tag-in", true, "only tag classes in the specified prefixes");
         options.addOption(null, "write-tags-to", true, "write in-subset tags to specified file");
         options.addOption(null, "no-remove", false, "do not remove classes not in the subset from the output ontology");
+        options.addOption(null, "prune-taxa", false, "prune the NCBITaxon tree of all non-relevant taxa");
     }
 
     @Override
@@ -141,6 +143,13 @@ public class SpeciesSubsetCommand extends BasePlugin {
                     c.accept(remover);
                 }
             }
+            if ( line.hasOption("prune-taxa") ) {
+                for ( OWLClass c : getExcludedTaxa(mgr.getOWLDataFactory(), reasoner, taxonID) ) {
+                    if ( !c.isTopEntity() && !c.isBottomEntity() ) {
+                        c.accept(remover);
+                    }
+                }
+            }
             mgr.applyChanges(remover.getChanges());
         }
     }
@@ -172,6 +181,16 @@ public class SpeciesSubsetCommand extends BasePlugin {
         }
 
         return new HashSet<OWLAxiom>(addAxioms);
+    }
+
+    private Set<OWLClass> getExcludedTaxa(OWLDataFactory factory, OWLReasoner reasoner, IRI taxonID) {
+        OWLClass taxon = factory.getOWLClass(taxonID);
+        Set<OWLClass> taxa = reasoner.getSubClasses(factory.getOWLClass(TAXON_ROOT), false).getFlattened();
+        taxa.remove(taxon);
+        taxa.removeAll(reasoner.getSuperClasses(taxon, false).getFlattened());
+        taxa.removeAll(reasoner.getSubClasses(taxon, false).getFlattened());
+
+        return taxa;
     }
 
     private ISpeciesSubsetStrategy getStrategy(CommandLine line) {
