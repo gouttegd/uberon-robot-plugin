@@ -78,8 +78,8 @@ public class MergeSpeciesCommand extends BasePlugin {
     public void performOperation(CommandState state, CommandLine line) throws Exception {
         List<MergeOperation> ops = new ArrayList<MergeOperation>();
 
-        if ( line.hasOption('b') ) {
-            parseBatchFile(line.getOptionValue('b'), ops);
+        if ( line.hasOption("batch-file") ) {
+            parseBatchFile(line.getOptionValue("batch-file"), ops);
         } else {
             MergeOperation op = new MergeOperation();
 
@@ -109,15 +109,15 @@ public class MergeSpeciesCommand extends BasePlugin {
         OWLReasoner reasoner = CommandLineHelper.getReasonerFactory(line).createReasoner(ontology);
         SpeciesMerger merger = new SpeciesMerger(ontology, reasoner);
 
-        if ( line.hasOption('x') ) {
+        if ( line.hasOption("extended-translation") ) {
             merger.setExtendedTranslation(true);
         }
-        if ( line.hasOption('g') ) {
+        if ( line.hasOption("translate-gcas") ) {
             merger.setGCAMode(SpeciesMerger.GCAMergeMode.TRANSLATE);
-        } else if ( line.hasOption('G') ) {
+        } else if ( line.hasOption("remove-gcas") ) {
             merger.setGCAMode(SpeciesMerger.GCAMergeMode.DELETE);
         }
-        if ( line.hasOption('d') ) {
+        if ( line.hasOption("remove-declarations") ) {
             merger.setRemoveDeclarationAxiom(true);
         }
 

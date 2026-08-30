@@ -69,27 +69,28 @@ public class MergeEquivalentSetsCommand extends BasePlugin {
         EquivalenceSetMerger merger = new EquivalenceSetMerger();
         OWLDataFactory factory = state.getOntology().getOWLOntologyManager().getOWLDataFactory();
 
-        if ( line.hasOption("s") ) {
-            setScores(null, line.getOptionValues('s'), merger);
+        if ( line.hasOption("iri-priority") ) {
+            setScores(null, line.getOptionValues("iri-priority"), merger);
         }
 
-        if ( line.hasOption("l") ) {
-            setScores(factory.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()), line.getOptionValues('l'),
+        if ( line.hasOption("label-priority") ) {
+            setScores(factory.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()),
+                    line.getOptionValues("label-priority"),
                     merger);
         }
 
-        if ( line.hasOption("c") ) {
+        if ( line.hasOption("comment-priority") ) {
             setScores(factory.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_COMMENT.getIRI()),
-                    line.getOptionValues('c'), merger);
+                    line.getOptionValues("comment-priority"), merger);
         }
 
-        if ( line.hasOption("d") ) {
+        if ( line.hasOption("definition-priority") ) {
             setScores(factory.getOWLAnnotationProperty(Obo2OWLConstants.Obo2OWLVocabulary.IRI_IAO_0000115.getIRI()),
-                    line.getOptionValues('d'), merger);
+                    line.getOptionValues("definition-priority"), merger);
         }
 
-        if ( line.hasOption('p') ) {
-            for ( String prefix : line.getOptionValues('p') ) {
+        if ( line.hasOption("preserve") ) {
+            for ( String prefix : line.getOptionValues("preserve") ) {
                 merger.addPreservedPrefix(prefix);
             }
         }
